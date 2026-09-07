@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>موسوعة الأنظمة — مكتبة قانونية</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ============ Design tokens ============ */
+:root{
+  --ink:#22302b;
+  --ink-soft:#4c5c56;
+  --paper:#f6f3ea;
+  --paper-raised:#ffffff;
+  --line:#e3ddca;
+  --pine:#1f6f5c;
+  --pine-deep:#144a3d;
+  --pine-tint:#e4f0ec;
+  --amber:#e2a23b;
+  --amber-deep:#c17f1f;
+  --amber-tint:#fbeed9;
+  --clay:#c1573f;
+  --shadow: 0 10px 30px rgba(31,60,50,.10);
+  --radius: 18px;
+  --radius-sm: 10px;
+  --maxw: 1100px;
+  --dur: .5s;
+}
+.dark{
+  --ink:#eae7db;
+  --ink-soft:#b7c2bc;
+  --paper:#141c19;
+  --paper-raised:#1c2622;
+  --line:#2b3733;
+  --pine:#4fb89a;
+  --pine-deep:#8fd8c1;
+  --pine-tint:#1c2f2a;
+  --amber:#f0b654;
+  --amber-deep:#f4c877;
+  --amber-tint:#2e2718;
+  --shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Tajawal',sans-serif;
+  background:var(--paper);
+  color:var(--ink);
+  line-height:1.9;
+  transition:background .4s ease, color .4s ease;
+  overflow-x:hidden;
+}
+h1,h2,h3,h4{font-family:'Cairo',sans-serif; color:var(--ink); line-height:1.4;}
+a{color:inherit; text-decoration:none;}
+.container{max-width:var(--maxw); margin:0 auto; padding:0 24px;}
+img,svg{display:block;}
+button{font-family:inherit; cursor:pointer; border:none; background:none;}
+::selection{background:var(--amber); color:#231a08;}
+/* ============ decorative floating blobs ============ */
+.blob-field{position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden;}
+.blob{position:absolute; border-radius:50%; filter:blur(60px); opacity:.35; animation: float 16s ease-in-out infinite;}
+.blob.b1{width:340px;height:340px; background:var(--pine); top:-100px; right:-80px; animation-delay:0s;}
+.blob.b2{width:280px;height:280px; background:var(--amber); bottom:-60px; left:-60px; animation-delay:3s;}
+.blob.b3{width:220px;height:220px; background:var(--clay); top:40%; left:30%; animation-delay:6s; opacity:.18;}
+@keyframes float{
+  0%,100%{transform:translate(0,0) scale(1);}
+  33%{transform:translate(30px,-40px) scale(1.08);}
+  66%{transform:translate(-25px,25px) scale(.94);}
+}
+@media (prefers-reduced-motion: reduce){
+  .blob{animation:none;}
+  *{animation-duration:.001s !important; transition-duration:.001s !important;}
+}
+/* ============ header ============ */
+header{
+  position:sticky; top:0; z-index:50;
+  background:color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+  transition:padding .3s ease, background .4s ease;
+}
+header.shrink{padding-block:0;}
+.head-row{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:18px 24px; max-width:var(--maxw); margin:0 auto;
+  transition:padding .3s ease;
+}
+header.shrink .head-row{padding-block:10px;}
+.logo{display:flex; align-items:center; gap:10px; font-family:'Cairo',sans-serif; font-weight:800; font-size:1.25rem;}
+.logo-mark{
+  width:38px;height:38px; border-radius:11px;
+  background:linear-gradient(135deg,var(--pine),var(--pine-deep));
+  display:flex; align-items:center; justify-content:center;
+  color:#fff; font-size:1.1rem; font-weight:900;
+  box-shadow:var(--shadow);
+  transition:transform .4s cubic-bezier(.34,1.56,.64,1);
+}
+.logo:hover .logo-mark{transform:rotate(-12deg) scale(1.08);}
+nav.main-nav{display:flex; gap:6px; align-items:center;}
+nav.main-nav a{
+  padding:9px 16px; border-radius:999px; font-weight:500; font-size:.96rem;
+  color:var(--ink-soft); position:relative; transition:.25s;
+}
+nav.main-nav a:hover, nav.main-nav a.active{background:var(--pine-tint); color:var(--pine-deep);}
+.head-actions{display:flex; align-items:center; gap:10px;}
+.icon-btn{
+  width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  background:var(--paper-raised); border:1px solid var(--line); transition:.3s;
+}
+.icon-btn:hover{transform:rotate(15deg) scale(1.06); border-color:var(--amber);}
+.burger{display:none;}
+@media(max-width:860px){
+  nav.main-nav{display:none;}
+  .burger{display:flex;}
+}
+.mobile-menu{
+  display:none; flex-direction:column; gap:4px; padding:10px 24px 18px; border-top:1px solid var(--line);
+}
+.mobile-menu.open{display:flex; animation:slideDown .35s ease;}
+@keyframes slideDown{from{opacity:0; transform:translateY(-10px);} to{opacity:1; transform:translateY(0);}}
+.mobile-menu a{padding:12px 6px; border-radius:10px; font-weight:500;}
+.mobile-menu a:hover{background:var(--pine-tint);}
+/* ============ generic reveal ============ */
+.reveal{opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s cubic-bezier(.2,.8,.2,1);}
+.reveal.show{opacity:1; transform:translateY(0);}
+.stagger > * {transition-delay: calc(var(--i,0) * 90ms);}
+/* ============ page wrap ============ */
+main{position:relative; z-index:1; min-height:60vh;}
+.page{display:none; animation:pageIn .5s ease;}
+.page.active{display:block;}
+@keyframes pageIn{from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);}}
+/* ============ hero ============ */
+.hero{padding:88px 0 60px; text-align:center; position:relative;}
+.eyebrow-pill{
+  display:inline-flex; align-items:center; gap:8px; background:var(--amber-tint); color:var(--amber-deep);
+  padding:8px 18px; border-radius:999px; font-weight:700; font-size:.85rem; margin-bottom:22px;
+  animation:pop .6s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes pop{from{opacity:0; transform:scale(.7);} to{opacity:1; transform:scale(1);}}
+.hero h1{
+  font-size:clamp(2.1rem, 5vw, 3.4rem); font-weight:900; max-width:780px; margin:0 auto 20px;
+  background:linear-gradient(95deg, var(--ink) 30%, var(--pine) 70%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.hero p.lead{max-width:560px; margin:0 auto 34px; color:var(--ink-soft); font-size:1.12rem;}
+.hero-actions{display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-bottom:52px;}
+.btn{
+  padding:14px 30px; border-radius:999px; font-weight:700; font-size:1rem; display:inline-flex; align-items:center; gap:8px;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s;
+  position:relative; overflow:hidden;
+}
+.btn::after{content:''; position:absolute; inset:0; background:rgba(255,255,255,.25); transform:scale(0); border-radius:50%; transition:transform .5s ease;}
+.btn:active::after{transform:scale(3);}
+.btn-primary{background:linear-gradient(135deg,var(--pine),var(--pine-deep)); color:#fff; box-shadow:0 8px 20px rgba(31,111,92,.35);}
+.btn-primary:hover{transform:translateY(-3px) scale(1.03); box-shadow:0 14px 28px rgba(31,111,92,.4);}
+.btn-ghost{background:var(--paper-raised); color:var(--ink); border:1.5px solid var(--line);}
+.btn-ghost:hover{transform:translateY(-3px); border-color:var(--amber);}
+.btn-sm{padding:9px 18px; font-size:.9rem;}
+/* quick search card */
+.search-card{
+  max-width:760px; margin:0 auto; background:var(--paper-raised); border:1px solid var(--line);
+  border-radius:var(--radius); box-shadow:var(--shadow); padding:26px; text-align:right;
+  transform:translateY(0); transition:box-shadow .4s;
+}
+.search-card:hover{box-shadow:0 18px 40px rgba(31,60,50,.16);}
+.search-tabs{display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap;}
+.search-tab{
+  padding:8px 16px; border-radius:999px; font-size:.88rem; font-weight:600; background:var(--pine-tint); color:var(--pine-deep);
+  transition:.25s;
+}
+.search-tab.active{background:var(--pine); color:#fff; box-shadow:0 4px 12px rgba(31,111,92,.35);}
+.search-row{display:flex; gap:10px; flex-wrap:wrap;}
+select,input[type=text]{
+  flex:1; min-width:180px; padding:13px 16px; border-radius:var(--radius-sm); border:1.5px solid var(--line);
+  background:var(--paper); color:var(--ink); font-family:inherit; font-size:.98rem; transition:.25s;
+}
+select:focus,input:focus{outline:none; border-color:var(--pine); box-shadow:0 0 0 4px var(--pine-tint);}
+/* ============ sections ============ */
+section{padding:60px 0;}
+.section-head{text-align:center; max-width:600px; margin:0 auto 40px;}
+.section-head h2{font-size:clamp(1.5rem,3vw,2rem); font-weight:800; margin-bottom:10px;}
+.section-head p{color:var(--ink-soft);}
+/* system cards grid */
+.grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:22px;}
+.card{
+  background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius);
+  padding:26px; transition:transform .4s cubic-bezier(.2,.9,.3,1.2), box-shadow .4s, border-color .3s;
+  position:relative; overflow:hidden;
+}
+.card::before{
+  content:''; position:absolute; inset:0; opacity:0; background:radial-gradient(120px 120px at var(--mx,50%) var(--my,0%), var(--pine-tint), transparent 70%);
+  transition:opacity .4s;
+}
+.card:hover::before{opacity:1;}
+.card:hover{transform:translateY(-8px); box-shadow:var(--shadow); border-color:var(--pine);}
+.card-icon{
+  width:48px;height:48px;border-radius:14px; display:flex; align-items:center; justify-content:center;
+  background:var(--pine-tint); color:var(--pine); font-size:1.3rem; margin-bottom:16px; font-weight:800;
+  transition:transform .4s cubic-bezier(.34,1.56,.64,1);
+}
+.card:hover .card-icon{transform:rotate(-8deg) scale(1.1);}
+.card h3{font-size:1.15rem; margin-bottom:8px;}
+.card p.desc{color:var(--ink-soft); font-size:.92rem; margin-bottom:14px;}
+.badge-row{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:14px;}
+.count-pill{font-size:.82rem; font-weight:700; color:var(--pine-deep); background:var(--pine-tint); padding:5px 12px; border-radius:999px;}
+.type-pill{font-size:.78rem; font-weight:700; color:var(--amber-deep); background:var(--amber-tint); padding:5px 12px; border-radius:999px;}
+/* steps */
+.steps{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:26px; counter-reset:step;}
+.step{text-align:center; position:relative;}
+.step-num{
+  width:56px;height:56px;border-radius:50%; margin:0 auto 16px; display:flex; align-items:center; justify-content:center;
+  background:linear-gradient(135deg,var(--amber),var(--amber-deep)); color:#fff; font-family:'Cairo',sans-serif; font-weight:900; font-size:1.3rem;
+  box-shadow:0 8px 18px rgba(226,162,59,.4);
+  animation:bob 3.4s ease-in-out infinite;
+}
+.step:nth-child(2) .step-num{animation-delay:.4s;}
+.step:nth-child(3) .step-num{animation-delay:.8s;}
+@keyframes bob{0%,100%{transform:translateY(0);} 50%{transform:translateY(-8px);}}
+.step h4{font-size:1.05rem; margin-bottom:8px;}
+.step p{color:var(--ink-soft); font-size:.9rem;}
+/* recent articles list */
+.recent-list{display:flex; flex-direction:column; gap:12px;}
+.recent-item{
+  display:flex; align-items:center; justify-content:space-between; gap:14px; background:var(--paper-raised);
+  border:1px solid var(--line); border-radius:var(--radius-sm); padding:16px 20px; transition:.3s;
+}
+.recent-item:hover{border-color:var(--pine); transform:translateX(-4px);}
+[dir=rtl] .recent-item:hover{transform:translateX(4px);}
+.recent-item .meta{display:flex; align-items:center; gap:12px;}
+.recent-tag{width:8px;height:8px;border-radius:50%; background:var(--pine); flex-shrink:0; animation:pulseDot 2s infinite;}
+@keyframes pulseDot{0%,100%{box-shadow:0 0 0 0 rgba(31,111,92,.4);} 70%{box-shadow:0 0 0 8px rgba(31,111,92,0);}}
+/* breadcrumb */
+.breadcrumb{display:flex; gap:8px; align-items:center; flex-wrap:wrap; color:var(--ink-soft); font-size:.9rem; margin-bottom:20px;}
+.breadcrumb a{color:var(--pine-deep); font-weight:600;}
+.breadcrumb a:hover{text-decoration:underline;}
+.breadcrumb .sep{opacity:.5;}
+/* filter bar */
+.filter-bar{display:flex; gap:10px; flex-wrap:wrap; margin:26px 0 34px; align-items:center;}
+.chip{
+  padding:9px 18px; border-radius:999px; background:var(--paper-raised); border:1.5px solid var(--line); font-weight:600; font-size:.9rem;
+  transition:.25s;
+}
+.chip.active,.chip:hover{background:var(--pine); border-color:var(--pine); color:#fff;}
+/* article list (compact) */
+.article-list{display:flex; flex-direction:column; gap:10px;}
+.article-row{
+  display:flex; justify-content:space-between; align-items:center; gap:16px; padding:18px 22px;
+  background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius-sm); transition:.3s;
+}
+.article-row:hover{border-color:var(--pine); box-shadow:var(--shadow); transform:scale(1.01);}
+.article-row .num{
+  font-family:'Cairo',sans-serif; font-weight:800; color:var(--pine); font-size:1.1rem; min-width:70px;
+}
+.article-row .snippet{flex:1; color:var(--ink-soft); font-size:.9rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+/* search results page */
+.result-card{
+  background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:22px; margin-bottom:16px;
+  transition:.3s; animation:fadeUp .5s ease both;
+}
+.result-card:hover{border-color:var(--amber); box-shadow:var(--shadow);}
+.result-card h4{font-size:1.05rem; margin-bottom:8px; color:var(--pine-deep);}
+.result-card .snippet-text{color:var(--ink-soft); font-size:.94rem; margin-bottom:10px;}
+mark{background:var(--amber-tint); color:var(--amber-deep); border-radius:4px; padding:1px 3px; font-weight:700;}
+.match-loc{font-size:.78rem; color:var(--pine); font-weight:700; margin-bottom:10px; display:inline-block;}
+@keyframes fadeUp{from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);}}
+/* empty state */
+.empty-state{text-align:center; padding:60px 20px; color:var(--ink-soft);}
+.empty-state .emoji-badge{
+  width:80px; height:80px; border-radius:50%; margin:0 auto 20px; display:flex; align-items:center; justify-content:center;
+  background:var(--amber-tint); font-size:2rem; animation:wiggle 2.6s ease-in-out infinite;
+}
+@keyframes wiggle{0%,100%{transform:rotate(0);} 25%{transform:rotate(-8deg);} 75%{transform:rotate(8deg);}}
+.empty-state h3{color:var(--ink); margin-bottom:10px;}
+.empty-state ul{list-style:none; margin-top:16px; display:inline-block; text-align:right;}
+.empty-state li{padding:4px 0; position:relative; padding-right:20px;}
+.empty-state li::before{content:'✦'; position:absolute; right:0; color:var(--amber);}
+/* article page layout */
+.article-layout{display:grid; grid-template-columns:220px 1fr; gap:36px; align-items:start;}
+@media(max-width:860px){.article-layout{grid-template-columns:1fr;}}
+.toc{position:sticky; top:100px; display:flex; flex-direction:column; gap:4px;}
+.toc a{padding:10px 14px; border-radius:10px; font-size:.88rem; color:var(--ink-soft); font-weight:600; border-right:3px solid transparent; transition:.25s;}
+[dir=rtl] .toc a{border-right:none; border-left:3px solid transparent;}
+.toc a:hover, .toc a.on{background:var(--pine-tint); color:var(--pine-deep); border-color:var(--pine);}
+@media(max-width:860px){.toc{position:static; flex-direction:row; overflow-x:auto; padding-bottom:8px;}}
+.article-head{margin-bottom:28px;}
+.article-head h1{font-size:clamp(1.5rem,3.4vw,2.1rem); margin:8px 0 6px;}
+.article-tools{display:flex; gap:8px; margin-top:16px; flex-wrap:wrap;}
+.tool-btn{
+  display:flex; align-items:center; gap:6px; padding:9px 16px; border-radius:999px; background:var(--paper-raised);
+  border:1px solid var(--line); font-size:.86rem; font-weight:600; transition:.25s;
+}
+.tool-btn:hover{border-color:var(--pine); color:var(--pine-deep); transform:translateY(-2px);}
+.art-section{scroll-margin-top:100px; margin-bottom:34px; padding-bottom:34px; border-bottom:1px dashed var(--line);}
+.art-section:last-of-type{border-bottom:none;}
+.art-section h2{font-size:1.15rem; display:flex; align-items:center; gap:10px; margin-bottom:16px;}
+.art-section h2 .dot{width:9px;height:9px;border-radius:50%; background:var(--pine);}
+.law-block{
+  background:var(--pine-tint); border-right:4px solid var(--pine); border-radius:var(--radius-sm);
+  padding:22px; font-size:1.02rem; line-height:2.1; position:relative;
+}
+[dir=rtl] .law-block{border-right:4px solid var(--pine); border-left:none;}
+.law-block .copy-inline{position:absolute; left:14px; top:14px;}
+[dir=rtl] .law-block .copy-inline{left:14px; right:auto;}
+.slang-block{
+  background:var(--amber-tint); border-radius:var(--radius-sm); padding:20px; position:relative;
+}
+.slang-note{font-size:.8rem; font-weight:700; color:var(--amber-deep); margin-bottom:8px; display:flex; align-items:center; gap:6px;}
+.empty-note{color:var(--ink-soft); font-style:italic; font-size:.92rem; background:var(--paper); padding:14px 18px; border-radius:var(--radius-sm); border:1px dashed var(--line);}
+/* accordion examples */
+.example-card{border:1px solid var(--line); border-radius:var(--radius-sm); margin-bottom:12px; overflow:hidden; background:var(--paper-raised);}
+.example-toggle{
+  width:100%; display:flex; justify-content:space-between; align-items:center; padding:16px 20px; font-weight:700; font-size:.95rem;
+}
+.example-toggle .chev{transition:transform .35s cubic-bezier(.4,0,.2,1); color:var(--pine);}
+.example-card.open .example-toggle .chev{transform:rotate(180deg);}
+.example-body{max-height:0; overflow:hidden; transition:max-height .4s ease;}
+.example-card.open .example-body{max-height:400px;}
+.example-body-inner{padding:0 20px 18px; color:var(--ink-soft); font-size:.93rem;}
+/* related grid */
+.related-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px;}
+.related-card{
+  background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius-sm); padding:16px 18px; transition:.3s;
+}
+.related-card:hover{border-color:var(--pine); transform:translateY(-4px); box-shadow:var(--shadow);}
+.related-card .num{font-family:'Cairo',sans-serif; font-weight:800; color:var(--pine);}
+.related-card .sysname{font-size:.82rem; color:var(--ink-soft); margin:2px 0 10px;}
+/* prev/next footer nav */
+.article-nav{display:flex; justify-content:space-between; gap:14px; margin-top:44px; flex-wrap:wrap;}
+.nav-arrow{
+  flex:1; min-width:200px; background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius-sm);
+  padding:16px 20px; transition:.3s;
+}
+.nav-arrow:hover{border-color:var(--amber); transform:translateY(-3px);}
+.nav-arrow .lbl{font-size:.78rem; color:var(--ink-soft); margin-bottom:4px;}
+.nav-arrow .val{font-weight:700; font-family:'Cairo',sans-serif;}
+.updated-line{text-align:center; color:var(--ink-soft); font-size:.82rem; margin-top:28px;}
+/* loading */
+.loader-wrap{display:flex; flex-direction:column; align-items:center; gap:14px; padding:80px 0; color:var(--ink-soft);}
+.spinner{
+  width:44px;height:44px; border-radius:50%; border:4px solid var(--line); border-top-color:var(--pine);
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+/* about / disclaimer */
+.prose-card{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:36px; box-shadow:var(--shadow);}
+.prose-card p{margin-bottom:16px; color:var(--ink-soft);}
+.prose-card h3{margin:24px 0 10px; font-size:1.1rem;}
+.prose-card ul{padding-right:22px; color:var(--ink-soft);}
+.prose-card li{margin-bottom:8px;}
+/* footer */
+footer{border-top:1px solid var(--line); margin-top:60px; padding:50px 0 26px; position:relative; z-index:1;}
+.footer-grid{display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:32px; margin-bottom:34px;}
+@media(max-width:700px){.footer-grid{grid-template-columns:1fr;}}
+.footer-grid h5{font-size:.92rem; margin-bottom:14px; color:var(--ink);}
+.footer-grid a{display:block; padding:6px 0; color:var(--ink-soft); font-size:.9rem; transition:.2s;}
+.footer-grid a:hover{color:var(--pine-deep); padding-right:4px;}
+[dir=rtl] .footer-grid a:hover{padding-right:0; padding-left:4px;}
+.footer-bottom{display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; color:var(--ink-soft); font-size:.82rem; padding-top:20px; border-top:1px solid var(--line);}
+/* back to top */
+.top-btn{
+  position:fixed; bottom:26px; left:26px; width:48px; height:48px; border-radius:50%;
+  background:var(--pine); color:#fff; display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow);
+  z-index:60; opacity:0; pointer-events:none; transform:translateY(10px) scale(.8); transition:.35s cubic-bezier(.34,1.56,.64,1);
+}
+.top-btn.show{opacity:1; pointer-events:auto; transform:translateY(0) scale(1);}
+.top-btn:hover{transform:translateY(-4px) scale(1.08);}
+/* toast */
+.toast{
+  position:fixed; bottom:26px; right:50%; transform:translate(50%,20px); background:var(--ink); color:var(--paper);
+  padding:12px 22px; border-radius:999px; font-size:.9rem; font-weight:600; z-index:80; opacity:0; transition:.4s;
+  box-shadow:var(--shadow);
+}
+.toast.show{opacity:1; transform:translate(50%,0);}
+@media print{
+  header,footer,.top-btn,.toc,.article-tools,.blob-field,.search-card{display:none !important;}
+  .article-layout{grid-template-columns:1fr;}
+}
+.key-phrase{color:#1b6251;background:transparent;font-weight:800;}
+.dark .key-phrase{color:#ffe066;}
+.art-section{scroll-margin-top:110px;}
+#artToc a[hidden]{display:none;}
+</style>
+</head>
+<body>
+<div class="blob-field"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+<!-- ============ HEADER ============ -->
+<header id="siteHeader">
+  <div class="head-row">
+    <a href="#/" class="logo" onclick="go('home')">
+      <span class="logo-mark">م</span>
+      موسوعة الأنظمة
+    </a>
+    <nav class="main-nav" id="mainNav">
+      <a href="#/" onclick="go('home')" data-r="home">الرئيسية</a>
+      <a href="#/systems" onclick="go('systems')" data-r="systems">الأنظمة واللوائح</a>
+      <a href="#/search" onclick="go('search')" data-r="search">البحث</a>
+      <a href="#/about" onclick="go('about')" data-r="about">عن المشروع</a>
+    </nav>
+    <div class="head-actions">
+      <button class="icon-btn" id="darkToggle" title="الوضع الليلي">🌙</button>
+      <button class="icon-btn burger" id="burgerBtn">☰</button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#/" onclick="go('home')">الرئيسية</a>
+    <a href="#/systems" onclick="go('systems')">الأنظمة واللوائح</a>
+    <a href="#/search" onclick="go('search')">البحث</a>
+    <a href="#/about" onclick="go('about')">عن المشروع</a>
+    <a href="#/legal" onclick="go('legal')">المصادر والتنبيه</a>
+  </div>
+</header>
+<main class="container" id="mainContainer">
+  <!-- ============ HOME ============ -->
+  <section class="page active" id="page-home">
+    <div class="hero">
+      <span class="eyebrow-pill reveal show">✦ مكتبة قانونية تفاعلية</span>
+      <h1 class="reveal show">افهم المواد النظامية بطريقة أوضح</h1>
+      <p class="lead reveal show" style="transition-delay:.1s">مكتبة تتيح لك الوصول إلى نصوص المواد، وشروحها، واستخداماتها، وأمثلتها التطبيقية — في مكان واحد.</p>
+      <div class="hero-actions reveal show" style="transition-delay:.2s">
+        <button class="btn btn-primary" onclick="go('systems')">استعرض الأنظمة</button>
+        <button class="btn btn-ghost" onclick="go('search')">ابحث عن مادة</button>
+      </div>
+      <div class="search-card reveal show" style="transition-delay:.3s">
+        <div class="search-tabs">
+          <span class="search-tab active" data-mode="pick">اختيار المادة</span>
+          <span class="search-tab" data-mode="num">رقم المادة</span>
+          <span class="search-tab" data-mode="text">جزء من النص</span>
+        </div>
+        <div class="search-row">
+          <select id="qSystem"><option value="">كل الأنظمة</option></select>
+          <div id="qModeArea" style="flex:2; min-width:220px; display:flex; gap:10px;"></div>
+          <button class="btn btn-primary btn-sm" id="qGo">عرض</button>
+        </div>
+      </div>
+    </div>
+    <section>
+      <div class="section-head reveal"><h2>الأنظمة واللوائح</h2><p>تصفح المكتبة حسب النظام أو اللائحة</p></div>
+      <div class="grid stagger" id="homeSystemsGrid"></div>
+    </section>
+    <section>
+      <div class="section-head reveal"><h2>كيف تستخدم الموقع؟</h2><p>ثلاث خطوات بسيطة فقط</p></div>
+      <div class="steps">
+        <div class="step reveal"><div class="step-num">1</div><h4>اختر النظام</h4><p>حدد النظام أو اللائحة التي تريد الاطلاع عليها</p></div>
+        <div class="step reveal" style="transition-delay:.1s"><div class="step-num">2</div><h4>ابحث عن المادة</h4><p>بالرقم، أو من القائمة، أو بجزء من النص</p></div>
+        <div class="step reveal" style="transition-delay:.2s"><div class="step-num">3</div><h4>اطّلع على التفاصيل</h4><p>النص، الشرح، الاستخدام، الأمثلة، والشرح المبسط</p></div>
+      </div>
+    </section>
+    <section>
+      <div class="section-head reveal"><h2>مواد مضافة حديثًا</h2><p>آخر ما تمت إضافته إلى المكتبة</p></div>
+      <div class="recent-list reveal" id="recentList"></div>
+    </section>
+  </section>
+  <!-- ============ ALL SYSTEMS ============ -->
+  <section class="page" id="page-systems">
+    <div style="padding-top:40px;">
+      <div class="breadcrumb"><a href="#/" onclick="go('home')">الرئيسية</a><span class="sep">←</span><span>الأنظمة واللوائح</span></div>
+      <h1 style="font-size:2rem; margin-bottom:8px;">الأنظمة واللوائح</h1>
+      <p style="color:var(--ink-soft); max-width:560px;">تصفح كل الأنظمة واللوائح المتوفرة في المكتبة، وابحث بينها بالاسم.</p>
+      <div class="filter-bar">
+        <input type="text" id="sysSearchBox" placeholder="ابحث باسم النظام..." style="max-width:320px;">
+        <span class="chip active" data-f="all">الكل</span>
+        <span class="chip" data-f="نظام">الأنظمة</span>
+        <span class="chip" data-f="لائحة">اللوائح</span>
+      </div>
+      <div class="grid stagger" id="allSystemsGrid"></div>
+    </div>
+  </section>
+  <!-- ============ SYSTEM PAGE ============ -->
+  <section class="page" id="page-system">
+    <div style="padding-top:40px;" id="systemPageContent"></div>
+  </section>
+  <!-- ============ SEARCH RESULTS ============ -->
+  <section class="page" id="page-search">
+    <div style="padding-top:40px;" id="searchPageContent"></div>
+  </section>
+  <!-- ============ ARTICLE PAGE ============ -->
+  <section class="page" id="page-article">
+    <div style="padding-top:40px;" id="articlePageContent"></div>
+  </section>
+  <!-- ============ ABOUT ============ -->
+  <section class="page" id="page-about">
+    <div style="padding:40px 0; max-width:760px; margin:0 auto;">
+      <div class="breadcrumb"><a href="#/" onclick="go('home')">الرئيسية</a><span class="sep">←</span><span>عن المشروع</span></div>
+      <h1 style="font-size:2rem; margin-bottom:24px;">عن المشروع</h1>
+      <div class="prose-card">
+        <p>موسوعة الأنظمة منصة معرفية تهدف إلى تسهيل الوصول إلى المواد النظامية وفهمها، من خلال عرض نص المادة، وشرحها، وكيفية استخدامها، وأمثلتها التطبيقية، وشرحها بطريقة مبسطة.</p>
+        <h3>ما الهدف منه؟</h3>
+        <p>تقريب المحتوى القانوني من غير المتخصصين، دون التنازل عن دقة النص النظامي الأصلي.</p>
+        <h3>كيف أُعد المحتوى؟</h3>
+        <p>يعرض الموقع النصوص والشروح المضافة مسبقًا إلى المكتبة فقط، ولا يقوم بتوليد مواد أو شروحات من تلقاء نفسه.</p>
+      </div>
+    </div>
+  </section>
+  <!-- ============ LEGAL / SOURCES ============ -->
+  <section class="page" id="page-legal">
+    <div style="padding:40px 0; max-width:760px; margin:0 auto;">
+      <div class="breadcrumb"><a href="#/" onclick="go('home')">الرئيسية</a><span class="sep">←</span><span>المصادر والتنبيه</span></div>
+      <h1 style="font-size:2rem; margin-bottom:24px;">المصادر والتنبيه القانوني</h1>
+      <div class="prose-card">
+        <ul>
+          <li>يُعتمد في نقل النصوص النظامية على المصادر الرسمية.</li>
+          <li>يظهر تاريخ آخر مراجعة لكل مادة في نهاية صفحتها.</li>
+          <li>الشرح المرفق للتوعية والتبسيط فقط، ولا يمثل رأيًا قانونيًا ملزمًا.</li>
+          <li>هذا المحتوى لا يغني عن الاستشارة القانونية المتخصصة.</li>
+          <li>يُرجى الرجوع إلى النص الرسمي عند اتخاذ أي إجراء قانوني.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+  <!-- ============ 404 ============ -->
+  <section class="page" id="page-404">
+    <div class="empty-state">
+      <div class="emoji-badge">؟</div>
+      <h3>هذه الصفحة غير متوفرة</h3>
+      <p>الرابط الذي وصلت إليه غير صحيح أو تمت إزالته.</p>
+      <div style="margin-top:20px;"><button class="btn btn-primary" onclick="go('home')">العودة إلى الرئيسية</button></div>
+    </div>
+  </section>
+</main>
+<button class="top-btn" id="topBtn">↑</button>
+<div class="toast" id="toast"></div>
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="logo" style="margin-bottom:10px;"><span class="logo-mark">م</span>موسوعة الأنظمة</div>
+        <p style="color:var(--ink-soft); font-size:.88rem; max-width:280px;">مكتبة تتيح الوصول إلى نصوص المواد النظامية وشروحها بصورة ميسّرة وواضحة.</p>
+      </div>
+      <div>
+        <h5>روابط</h5>
+        <a href="#/" onclick="go('home')">الرئيسية</a>
+        <a href="#/systems" onclick="go('systems')">الأنظمة واللوائح</a>
+        <a href="#/about" onclick="go('about')">عن المشروع</a>
+      </div>
+      <div>
+        <h5>معلومات</h5>
+        <a href="#/legal" onclick="go('legal')">المصادر والتنبيه القانوني</a>
+        <a href="#/legal" onclick="go('legal')">سياسة الخصوصية</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 موسوعة الأنظمة. جميع الحقوق محفوظة.</span>
+      <span>محتوى توضيحي لأغراض العرض</span>
+    </div>
+  </div>
+</footer>
+<script>
+/* =====================================================================
+   مصدر البيانات: تُحمَّل SYSTEMS من data.json (يُولَّد تلقائيًا من ملفات
+   Markdown داخل 01-الأنظمة عبر generate_data.py). لا حاجة لتعديل هذا
+   الملف يدويًا عند إضافة أنظمة أو مواد جديدة — يكفي إعادة تشغيل
+   السكربت لتحديث data.json.
+===================================================================== */
+let SYSTEMS = [];
+let STATE = { dark:false, currentSystem:null, currentArticle:null, searchQuery:"", searchSystem:"", route:"home" };
+/* ---------- helpers ---------- */
+function allArticlesFlat(){
+  return SYSTEMS.flatMap(s => s.articles.map(a => ({...a, sysId:s.id, sysName:s.name})));
+}
+function findSystem(id){ return SYSTEMS.find(s=>s.id===id); }
+function findArticle(sysId, num){
+  const s = findSystem(sysId); if(!s) return null;
+  return s.articles.find(a=>a.num===Number(num)) || null;
+}
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2200);
+}
+function observeReveals(){
+  const els = document.querySelectorAll('.reveal:not(.show)');
+  const stagGroups = {};
+  els.forEach(el=>{
+    const parent = el.closest('.stagger');
+    if(parent){
+      if(!stagGroups[parent]) stagGroups[parent]=0;
+      el.style.transitionDelay = (stagGroups[parent]*70)+'ms';
+      stagGroups[parent]++;
+    }
+  });
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('show'); io.unobserve(en.target);} });
+  }, {threshold:.12});
+  els.forEach(el=>io.observe(el));
+}
+/* ---------- router ---------- */
+function render(route, params={}){
+  STATE.route = route;
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('nav.main-nav a').forEach(a=>a.classList.toggle('active', a.dataset.r===route));
+  document.getElementById('mobileMenu').classList.remove('open');
+  if(route==='system'){ renderSystemPage(params.id); document.getElementById('page-system').classList.add('active'); }
+  else if(route==='article'){ renderArticlePage(params.sysId, params.num); document.getElementById('page-article').classList.add('active'); }
+  else if(route==='search'){ renderSearchPage(params.q, params.sys); document.getElementById('page-search').classList.add('active'); }
+  else {
+    const el = document.getElementById('page-'+route);
+    if(el){ el.classList.add('active'); }
+    else { document.getElementById('page-404').classList.add('active'); }
+  }
+  window.scrollTo({top:0, behavior:'smooth'});
+  setTimeout(observeReveals, 50);
+}
+/* ---------- ربط التنقل بـ location.hash (روابط قابلة للحفظ/الرجوع) ---------- */
+function routeToHash(route, params={}){
+  if(route==='system') return '#/system/'+encodeURIComponent(params.id||'');
+  if(route==='article') return '#/article/'+encodeURIComponent(params.sysId||'')+'/'+encodeURIComponent(params.num!=null?params.num:'');
+  if(route==='search'){
+    const qs = new URLSearchParams();
+    if(params.q) qs.set('q', params.q);
+    if(params.sys) qs.set('sys', params.sys);
+    const s = qs.toString();
+    return '#/search'+(s?('?'+s):'');
+  }
+  if(route==='home') return '#/';
+  return '#/'+route;
+}
+function hashToRoute(){
+  let h = location.hash || '#/';
+  h = h.replace(/^#\/?/, '');
+  const [pathPart, queryPart] = h.split('?');
+  const segs = pathPart.split('/').filter(Boolean);
+  const qs = new URLSearchParams(queryPart||'');
+  if(segs.length===0) return {route:'home', params:{}};
+  if(segs[0]==='system') return {route:'system', params:{id:decodeURIComponent(segs[1]||'')}};
+  if(segs[0]==='article') return {route:'article', params:{sysId:decodeURIComponent(segs[1]||''), num:decodeURIComponent(segs[2]||'')}};
+  if(segs[0]==='search') return {route:'search', params:{q:qs.get('q')||'', sys:qs.get('sys')||''}};
+  if(['systems','about','legal'].includes(segs[0])) return {route:segs[0], params:{}};
+  return {route:'404', params:{}};
+}
+let _suppressHashHandler = false;
+function go(route, params={}){
+  const hash = routeToHash(route, params);
+  if(location.hash !== hash){
+    _suppressHashHandler = true;
+    location.hash = hash;
+  }
+  render(route, params);
+}
+window.addEventListener('hashchange', ()=>{
+  if(_suppressHashHandler){ _suppressHashHandler = false; return; }
+  const r = hashToRoute();
+  render(r.route, r.params);
+});
+/* ---------- render: home systems grid ---------- */
+function systemCardHTML(s){
+  const count = s.articles.length;
+  return `<div class="card reveal" onclick="go('system',{id:'${s.id}'})" style="cursor:pointer">
+    <div class="card-icon">${s.type==='نظام'?'§':'≡'}</div>
+    <span class="type-pill" style="margin-bottom:10px; display:inline-block;">${s.type}</span>
+    <h3>${s.name}</h3>
+    <p class="desc">${s.desc}</p>
+    <div class="badge-row">
+      <span class="count-pill">${count} ${count===1?'مادة':'مواد'} متوفرة</span>
+      <span style="color:var(--pine); font-weight:700; font-size:.85rem;">استعراض ←</span>
+    </div>
+  </div>`;
+}
+function noSystemsHTML(){
+  return `<div class="empty-state" style="grid-column:1/-1">
+    <div class="emoji-badge">🌱</div>
+    <h3>لا توجد أنظمة مضافة بعد</h3>
+    <p>سيتم عرض الأنظمة واللوائح هنا فور إضافتها إلى المكتبة.</p>
+  </div>`;
+}
+function renderHome(){
+  document.getElementById('homeSystemsGrid').innerHTML = SYSTEMS.length ? SYSTEMS.map(systemCardHTML).join('') : noSystemsHTML();
+  document.getElementById('allSystemsGrid').innerHTML = SYSTEMS.length ? SYSTEMS.map(systemCardHTML).join('') : noSystemsHTML();
+  const recent = allArticlesFlat().sort((a,b)=> new Date(b.added)-new Date(a.added)).slice(0,5);
+  document.getElementById('recentList').innerHTML = recent.map(a=>`
+    <div class="recent-item" onclick="go('article',{sysId:'${a.sysId}', num:${a.num}})" style="cursor:pointer">
+      <div class="meta"><span class="recent-tag"></span>
+        <div><strong>المادة ${a.num}</strong> — ${a.title}<div style="font-size:.8rem; color:var(--ink-soft);">${a.sysName}</div></div>
+      </div>
+      <span style="color:var(--pine); font-weight:700;">←</span>
+    </div>`).join('') || `<p style="color:var(--ink-soft)">لا توجد مواد مضافة بعد.</p>`;
+  // quick search system select
+  const sel = document.getElementById('qSystem');
+  sel.innerHTML = `<option value="">كل الأنظمة</option>` + SYSTEMS.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+  renderQuickSearchMode('pick');
+}
+function renderQuickSearchMode(mode){
+  const area = document.getElementById('qModeArea');
+  const sysId = document.getElementById('qSystem').value;
+  if(mode==='pick'){
+    const sys = findSystem(sysId);
+    const opts = sys ? sys.articles.map(a=>`<option value="${a.num}">المادة ${a.num} — ${a.title}</option>`).join('') : '';
+    area.innerHTML = `<select id="qVal"><option value="">اختر رقم المادة</option>${opts}</select>`;
+  } else if(mode==='num'){
+    area.innerHTML = `<input type="text" id="qVal" placeholder="اكتب رقم المادة مثال: 80">`;
+  } else {
+    area.innerHTML = `<input type="text" id="qVal" placeholder="اكتب كلمة أو جزءًا من النص">`;
+  }
+}
+document.addEventListener('click', (e)=>{
+  if(e.target.classList.contains('search-tab')){
+    document.querySelectorAll('.search-tab').forEach(t=>t.classList.remove('active'));
+    e.target.classList.add('active');
+    renderQuickSearchMode(e.target.dataset.mode);
+  }
+});
+document.getElementById('qSystem').addEventListener('change', ()=>{
+  const activeTab = document.querySelector('.search-tab.active');
+  renderQuickSearchMode(activeTab ? activeTab.dataset.mode : 'pick');
+});
+document.getElementById('qGo').addEventListener('click', ()=>{
+  const mode = document.querySelector('.search-tab.active').dataset.mode;
+  const sysId = document.getElementById('qSystem').value;
+  const val = document.getElementById('qVal').value.trim();
+  if(!val){ showToast('يرجى إدخال قيمة للبحث'); return; }
+  if(mode==='text'){ go('search', {q:val, sys:sysId}); }
+  else {
+    if(!sysId){ showToast('يرجى اختيار نظام أولًا'); return; }
+    const art = findArticle(sysId, val);
+    if(art) go('article', {sysId, num:art.num});
+    else showToast('المادة غير متوفرة حاليًا');
+  }
+});
+/* ---------- render: system page ---------- */
+function renderSystemPage(id){
+  const s = findSystem(id);
+  const wrap = document.getElementById('systemPageContent');
+  if(!s){ wrap.innerHTML = `<div class="empty-state"><div class="emoji-badge">؟</div><h3>النظام غير موجود</h3></div>`; return; }
+  STATE.currentSystem = id;
+  wrap.innerHTML = `
+    <div class="breadcrumb"><a href="#/" onclick="go('home')">الرئيسية</a><span class="sep">←</span><a href="#/systems" onclick="go('systems')">الأنظمة واللوائح</a><span class="sep">←</span><span>${s.name}</span></div>
+    <span class="type-pill">${s.type}</span>
+    <h1 style="font-size:2rem; margin:10px 0 8px;">${s.name}</h1>
+    <p style="color:var(--ink-soft); max-width:600px; margin-bottom:24px;">${s.desc}</p>
+    <div class="badge-row" style="justify-content:flex-start; gap:10px; margin-bottom:30px;">
+      <span class="count-pill">${s.articles.length} مادة متوفرة</span>
+    </div>
+    <div class="search-card" style="margin-bottom:32px;">
+      <div class="search-tabs">
+        <span class="search-tab active" data-smode="pick">اختيار المادة</span>
+        <span class="search-tab" data-smode="num">رقم المادة</span>
+        <span class="search-tab" data-smode="text">جزء من النص</span>
+      </div>
+      <div class="search-row" id="sModeArea"></div>
+    </div>
+    ${s.articles.length ? `
+    <h3 style="margin-bottom:16px;">قائمة المواد</h3>
+    <div class="article-list">
+      ${s.articles.slice().sort((a,b)=>a.num-b.num).map(a=>`
+        <div class="article-row" onclick="go('article',{sysId:'${s.id}', num:${a.num}})" style="cursor:pointer">
+          <span class="num">م. ${a.num}</span>
+          <span class="snippet">${a.title} — ${a.text.slice(0,70)}...</span>
+          <span style="color:var(--pine); font-weight:700;">←</span>
+        </div>`).join('')}
+    </div>` : `
+    <div class="empty-state">
+      <div class="emoji-badge">🌱</div>
+      <h3>محتوى هذا النظام قيد الإعداد</h3>
+      <p>سيتم إضافة مواد هذا النظام تباعًا.</p>
+    </div>`}
+  `;
+  function renderSMode(mode){
+    const area = document.getElementById('sModeArea');
+    if(mode==='pick'){
+      const opts = s.articles.map(a=>`<option value="${a.num}">المادة ${a.num} — ${a.title}</option>`).join('');
+      area.innerHTML = `<select id="sVal"><option value="">اختر رقم المادة</option>${opts}</select><button class="btn btn-primary btn-sm" id="sGo">عرض</button>`;
+    } else if(mode==='num'){
+      area.innerHTML = `<input type="text" id="sVal" placeholder="اكتب رقم المادة"><button class="btn btn-primary btn-sm" id="sGo">عرض المادة</button>`;
+    } else {
+      area.innerHTML = `<input type="text" id="sVal" placeholder="اكتب كلمة أو جزءًا من النص"><button class="btn btn-primary btn-sm" id="sGo">بحث</button>`;
+    }
+    document.getElementById('sGo').addEventListener('click', ()=>{
+      const val = document.getElementById('sVal').value.trim();
+      if(!val){ showToast('يرجى إدخال قيمة'); return; }
+      if(mode==='text'){ go('search', {q:val, sys:s.id}); }
+      else {
+        const art = findArticle(s.id, val);
+        if(art) go('article',{sysId:s.id, num:art.num});
+        else showToast('المادة غير متوفرة حاليًا');
+      }
+    });
+  }
+  wrap.querySelectorAll('.search-tab').forEach(t=>t.addEventListener('click', ()=>{
+    wrap.querySelectorAll('.search-tab').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active'); renderSMode(t.dataset.smode);
+  }));
+  renderSMode('pick');
+  setTimeout(observeReveals,50);
+}
+/* ---------- render: search results ---------- */
+function highlight(text, q){
+  if(!q) return text;
+  const esc = q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  return text.replace(new RegExp(esc,'gi'), m=>`<mark>${m}</mark>`);
+}
+function renderSearchPage(q, sysFilter){
+  q = q || ''; sysFilter = sysFilter || '';
+  const wrap = document.getElementById('searchPageContent');
+  wrap.innerHTML = `
+    <div class="breadcrumb"><a href="#/" onclick="go('home')">الرئيسية</a><span class="sep">←</span><span>نتائج البحث</span></div>
+    <h1 style="font-size:1.6rem; margin-bottom:6px;">نتائج البحث عن: "${q||'—'}"</h1>
+    <div class="filter-bar" style="margin-top:16px;">
+      <input type="text" id="searchInputLive" placeholder="ابحث عن كلمة..." value="${q}" style="max-width:260px;">
+      <select id="searchSysSelect"><option value="">كل الأنظمة</option>${SYSTEMS.map(s=>`<option value="${s.id}" ${s.id===sysFilter?'selected':''}>${s.name}</option>`).join('')}</select>
+      <button class="btn btn-primary btn-sm" id="searchLiveGo">بحث</button>
+    </div>
+    <div id="searchResultsArea" style="margin-top:20px;"></div>
+  `;
+  document.getElementById('searchLiveGo').addEventListener('click', ()=>{
+    const nq = document.getElementById('searchInputLive').value.trim();
+    const nsys = document.getElementById('searchSysSelect').value;
+    go('search', {q:nq, sys:nsys});
+  });
+  const resultsArea = document.getElementById('searchResultsArea');
+  if(!q){ resultsArea.innerHTML = `<p style="color:var(--ink-soft)">اكتب كلمة أعلاه لبدء البحث.</p>`; return; }
+  resultsArea.innerHTML = `<div class="loader-wrap"><div class="spinner"></div><span>جارٍ البحث...</span></div>`;
+  setTimeout(()=>{
+    let pool = allArticlesFlat();
+    if(sysFilter) pool = pool.filter(a=>a.sysId===sysFilter);
+    const qLower = q.toLowerCase();
+    const results = pool.filter(a =>
+      a.text.toLowerCase().includes(qLower) || a.explain.toLowerCase().includes(qLower) ||
+      a.title.toLowerCase().includes(qLower) || (a.slang||'').toLowerCase().includes(qLower)
+    );
+    if(results.length===0){
+      resultsArea.innerHTML = `
+        <div class="empty-state">
+          <div class="emoji-badge">🔍</div>
+          <h3>لم نجد مادة مطابقة في المحتوى المتوفر</h3>
+          <ul>
+            <li>تأكد من كتابة الكلمة بشكل صحيح</li>
+            <li>جرّب كلمة أقصر أو أعمّ</li>
+            <li>وسّع البحث ليشمل جميع الأنظمة</li>
+          </ul>
+        </div>`;
+      return;
+    }
+    resultsArea.innerHTML = `<p style="color:var(--ink-soft); margin-bottom:16px;">${results.length} نتيجة مطابقة</p>` +
+      results.map((a,i)=>{
+        let loc = 'نص المادة';
+        if(!a.text.toLowerCase().includes(qLower)){
+          loc = a.explain.toLowerCase().includes(qLower) ? 'المعنى والأحكام' : (a.title.toLowerCase().includes(qLower) ? 'عنوان المادة' : 'الالشرح الميسّر');
+        }
+        return `<div class="result-card" style="animation-delay:${i*80}ms" onclick="go('article',{sysId:'${a.sysId}', num:${a.num}})" style="cursor:pointer">
+          <span class="match-loc">مطابقة في: ${loc}</span>
+          <h4>المادة ${a.num} — ${a.sysName}</h4>
+          <p class="snippet-text">${highlight(a.text.slice(0,140), q)}...</p>
+          <span class="btn btn-ghost btn-sm">عرض المادة</span>
+        </div>`;
+      }).join('');
+  }, 450);
+}
+/* ---------- render: article page ---------- */
+function applyKeyPhrases(root){
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  const nodes = [];
+  while(walker.nextNode()){
+    if(walker.currentNode.nodeValue.includes('==')) nodes.push(walker.currentNode);
+  }
+  nodes.forEach(node=>{
+    const text = node.nodeValue;
+    const pattern = /==([^=]+)==/g;
+    const fragment = document.createDocumentFragment();
+    let match, cursor = 0;
+    while((match = pattern.exec(text))){
+      fragment.append(document.createTextNode(text.slice(cursor, match.index)));
+      const mark = document.createElement('mark');
+      mark.className = 'key-phrase';
+      mark.textContent = match[1];
+      fragment.append(mark);
+      cursor = pattern.lastIndex;
+    }
+    if(cursor){
+      fragment.append(document.createTextNode(text.slice(cursor)));
+      node.replaceWith(fragment);
+    }
+  });
+}
+
+function renderArticlePage(sysId, num){
+  const s = findSystem(sysId);
+  const a = findArticle(sysId, num);
+  const wrap = document.getElementById('articlePageContent');
+  if(!s || !a){
+    wrap.innerHTML = `<div class="empty-state"><div class="emoji-badge">؟</div><h3>المادة غير متوفرة</h3><p>تأكد من الرابط أو عد إلى قائمة المواد.</p><div style="margin-top:16px;"><button class="btn btn-primary" onclick="go('systems')">الأنظمة واللوائح</button></div></div>`;
+    return;
+  }
+  const sorted = s.articles.slice().sort((x,y)=>x.num-y.num);
+  const idx = sorted.findIndex(x=>x.num===a.num);
+  const prev = sorted[idx-1], next = sorted[idx+1];
+  wrap.innerHTML = `
+    <div class="breadcrumb"><a href="#/" onclick="go('home')">الرئيسية</a><span class="sep">←</span><a href="#/systems" onclick="go('systems')">${s.name}</a><span class="sep">←</span><span>المادة ${a.num}</span></div>
+    <div class="article-layout">
+      <nav class="toc" id="artToc">
+        <a href="#sec-text">نص المادة</a>
+        <a href="#sec-explain">المعنى والأحكام</a>
+        <a href="#sec-usage">التطبيق العملي</a>
+        <a href="#sec-examples">حالات تطبيقية</a>
+        <a href="#sec-slang">الشرح الميسّر</a>
+        <a href="#sec-related">مواد مرتبطة</a>
+      </nav>
+      <div>
+        <div class="article-head">
+          <span class="type-pill">${s.name}</span>
+          <h1>المادة ${a.num}${a.title ? ' — '+a.title : ''}</h1>
+          <div class="article-tools">
+            <button class="tool-btn" onclick="copyLink()">🔗 نسخ الرابط</button>
+            <button class="tool-btn" onclick="shareArticle('${a.num}','${s.name}')">↗ مشاركة</button>
+            <button class="tool-btn" onclick="window.print()">🖨 طباعة</button>
+          </div>
+        </div>
+        <div class="art-section" id="sec-text">
+          <h2><span class="dot"></span>نص المادة</h2>
+          <div class="law-block">
+            <button class="tool-btn copy-inline" onclick="copyText(this)" data-text="${a.text.replace(/"/g,'&quot;')}">نسخ</button>
+            ${a.text}
+          </div>
+        </div>
+        <div class="art-section" id="sec-explain">
+          <h2><span class="dot"></span>المعنى والأحكام</h2>
+          ${a.explain ? `<p style="color:var(--ink-soft)">${a.explain}</p>` : `<div class="empty-note">المعنى والأحكام غير متوفر حاليًا.</div>`}
+        </div>
+        <div class="art-section" id="sec-usage">
+          <h2><span class="dot"></span>التطبيق العملي</h2>
+          ${a.usage && a.usage.length ? `<ul style="padding-right:20px; color:var(--ink-soft); display:flex; flex-direction:column; gap:8px;">${a.usage.map(u=>`<li>${u}</li>`).join('')}</ul>` : `<div class="empty-note">لا يوجد محتوى استخدام مضاف بعد.</div>`}
+        </div>
+        <div class="art-section" id="sec-examples">
+          <h2><span class="dot"></span>حالات تطبيقية</h2>
+          ${a.examples && a.examples.length ? a.examples.map((ex,i)=>`
+            <div class="example-card">
+              <button class="example-toggle" onclick="toggleExample(this)">
+                <span>${ex.title}</span><span class="chev">⌄</span>
+              </button>
+              <div class="example-body"><div class="example-body-inner">${ex.body}</div></div>
+            </div>`).join('') : `<div class="empty-note">لا توجد حالات تطبيقية مضافة حاليًا.</div>`}
+        </div>
+        <div class="art-section" id="sec-slang">
+          <h2><span class="dot"></span>الشرح الميسّر</h2>
+          ${a.slang ? `<div class="slang-block"><div class="slang-note">💬 شرح مبسط للمادة</div>${a.slang}</div>` : `<div class="empty-note">الالشرح الميسّر غير متوفر حاليًا.</div>`}
+        </div>
+        <div class="art-section" id="sec-related" style="border-bottom:none;">
+          <h2><span class="dot"></span>مواد مرتبطة</h2>
+          ${a.related && a.related.length ? `<div class="related-grid">${a.related.map(r=>{
+            const rs = findSystem(r.sys);
+            return `<div class="related-card" onclick="go('article',{sysId:'${r.sys}', num:${r.num}})" style="cursor:pointer">
+              <div class="num">المادة ${r.num}</div>
+              <div class="sysname">${rs?rs.name:''}</div>
+              <span class="btn btn-ghost btn-sm">عرض المادة</span>
+            </div>`;
+          }).join('')}</div>` : `<div class="empty-note">لا توجد مواد مرتبطة مضافة حاليًا.</div>`}
+        </div>
+        <div class="article-nav">
+          ${prev ? `<div class="nav-arrow" onclick="go('article',{sysId:'${s.id}', num:${prev.num}})" style="cursor:pointer; text-align:right;"><div class="lbl">← المادة السابقة</div><div class="val">المادة ${prev.num}</div></div>` : `<div></div>`}
+          ${next ? `<div class="nav-arrow" onclick="go('article',{sysId:'${s.id}', num:${next.num}})" style="cursor:pointer; text-align:left;"><div class="lbl">المادة التالية →</div><div class="val">المادة ${next.num}</div></div>` : `<div></div>`}
+        </div>
+        <div style="text-align:center; margin-top:14px;"><a href="#/system" onclick="go('system',{id:'${s.id}'})" style="color:var(--pine-deep); font-weight:600;">↩ العودة إلى جميع مواد ${s.name}</a></div>
+        <div class="updated-line">آخر تحديث للمحتوى: ${a.added}</div>
+      </div>
+    </div>
+  `;
+  wrap.querySelectorAll('#artToc a').forEach(link=>{
+    link.addEventListener('click', event=>{
+      event.preventDefault();
+      const target = wrap.querySelector(link.getAttribute('href'));
+      if(target){
+        target.scrollIntoView({behavior:'smooth', block:'start'});
+        wrap.querySelectorAll('#artToc a').forEach(item=>item.classList.toggle('on', item===link));
+      }
+    });
+  });
+  if(!a.related || !a.related.length){
+    wrap.querySelector('#sec-related').hidden = true;
+    wrap.querySelector('#artToc a[href="#sec-related"]').hidden = true;
+  }
+  applyKeyPhrases(wrap);
+  // sticky TOC active state on scroll
+  const secs = wrap.querySelectorAll('.art-section');
+  const tocLinks = wrap.querySelectorAll('#artToc a');
+  const tocObserver = new IntersectionObserver((entries)=>{
+    entries.forEach(en=>{
+      if(en.isIntersecting){
+        tocLinks.forEach(l=>l.classList.remove('on'));
+        const link = wrap.querySelector(`#artToc a[href="#${en.target.id}"]`);
+        if(link) link.classList.add('on');
+      }
+    });
+  }, {rootMargin:'-40% 0px -50% 0px'});
+  secs.forEach(s=>tocObserver.observe(s));
+}
+function toggleExample(btn){ btn.closest('.example-card').classList.toggle('open'); }
+function copyText(btn){
+  const text = btn.dataset.text.replace(/==([^=]+)==/g, '$1');
+  navigator.clipboard?.writeText(text).then(()=>showToast('تم نسخ النص'));
+}
+function copyLink(){
+  navigator.clipboard?.writeText(location.href).then(()=>showToast('تم نسخ الرابط'));
+}
+function shareArticle(num, sysName){
+  showToast(`جاهز للمشاركة — المادة ${num} من ${sysName}`);
+}
+/* ---------- filters on systems page ---------- */
+document.getElementById('sysSearchBox').addEventListener('input', filterAllSystems);
+document.querySelectorAll('.filter-bar .chip').forEach(c=>{
+  if(c.dataset.f) c.addEventListener('click', ()=>{
+    document.querySelectorAll('.filter-bar .chip').forEach(x=>x.classList.remove('active'));
+    c.classList.add('active'); filterAllSystems();
+  });
+});
+function filterAllSystems(){
+  const q = document.getElementById('sysSearchBox').value.trim().toLowerCase();
+  const activeChip = document.querySelector('.filter-bar .chip.active');
+  const f = activeChip ? activeChip.dataset.f : 'all';
+  const filtered = SYSTEMS.filter(s => (f==='all' || s.type===f) && s.name.toLowerCase().includes(q));
+  document.getElementById('allSystemsGrid').innerHTML = filtered.length ? filtered.map(systemCardHTML).join('') :
+    (SYSTEMS.length ? `<div class="empty-state" style="grid-column:1/-1"><div class="emoji-badge">🔍</div><h3>لا توجد نتائج مطابقة</h3></div>` : noSystemsHTML());
+  setTimeout(observeReveals,30);
+}
+/* ---------- header shrink + burger + dark + top btn ---------- */
+window.addEventListener('scroll', ()=>{
+  document.getElementById('siteHeader').classList.toggle('shrink', window.scrollY > 40);
+  document.getElementById('topBtn').classList.toggle('show', window.scrollY > 500);
+});
+document.getElementById('burgerBtn').addEventListener('click', ()=>{
+  document.getElementById('mobileMenu').classList.toggle('open');
+});
+document.getElementById('darkToggle').addEventListener('click', (e)=>{
+  STATE.dark = !STATE.dark;
+  document.documentElement.classList.toggle('dark', STATE.dark);
+  e.currentTarget.textContent = STATE.dark ? '☀️' : '🌙';
+});
+document.getElementById('topBtn').addEventListener('click', ()=>window.scrollTo({top:0, behavior:'smooth'}));
+/* ---------- init ---------- */
+function startRoute(){
+  const r = hashToRoute();
+  if(!location.hash){ _suppressHashHandler = true; location.hash = '#/'; }
+  render(r.route, r.params);
+}
+fetch('data.json')
+  .then(res => { if(!res.ok) throw new Error('تعذّر تحميل data.json'); return res.json(); })
+  .then(json => { SYSTEMS = json || []; })
+  .catch(err => { console.error(err); SYSTEMS = []; })
+  .finally(() => { renderHome(); startRoute(); });
+</script>
+</body>
+</html>
