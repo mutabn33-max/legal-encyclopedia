@@ -301,8 +301,10 @@ mark{background:var(--amber-tint); color:var(--amber-deep); border-radius:4px; p
   padding:22px; font-size:1.02rem; line-height:2.1; position:relative;
 }
 [dir=rtl] .law-block{border-right:4px solid var(--pine); border-left:none;}
-.law-block .copy-inline{position:absolute; left:14px; top:14px;}
-[dir=rtl] .law-block .copy-inline{left:14px; right:auto;}
+.article-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:.8rem;color:var(--ink-soft);}
+.article-meta .meta-sep{opacity:.6;}
+.law-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
+.law-heading h2{margin-bottom:0;}
 .slang-block{
   background:var(--amber-tint); border-radius:var(--radius-sm); padding:20px; position:relative;
 }
@@ -898,8 +900,12 @@ function renderArticlePage(sysId, num){
       </nav>
       <div>
         <div class="article-head">
-          <span class="type-pill">${s.name}</span>
-          <h1>المادة ${a.num}${a.title ? ' — '+a.title : ''}</h1>
+          <div class="article-meta">
+            <span class="type-pill">${s.name}</span>
+            ${a.chapter && a.chapter.trim().replace(/[()]/g,'').trim() !== 'بدون باب' ? '<span class="meta-sep" aria-hidden="true">←</span><span>'+a.chapter+'</span>' : ''}
+            ${a.title ? '<span class="meta-sep" aria-hidden="true">←</span><span>'+a.title+'</span>' : ''}
+          </div>
+          <h1>المادة ${a.num}</h1>
           <div class="article-tools">
             <button class="tool-btn" onclick="copyLink()">🔗 نسخ الرابط</button>
             <button class="tool-btn" onclick="shareArticle('${a.num}','${s.name}')">↗ مشاركة</button>
@@ -907,9 +913,11 @@ function renderArticlePage(sysId, num){
           </div>
         </div>
         <div class="art-section" id="sec-text">
-          <h2><span class="dot"></span>نص المادة</h2>
+          <div class="law-heading">
+            <h2><span class="dot"></span>نص المادة</h2>
+            <button class="tool-btn" onclick="copyText(this)">نسخ المادة</button>
+          </div>
           <div class="law-block">
-            <button class="tool-btn copy-inline" onclick="copyText(this)" data-text="${a.text.replace(/"/g,'&quot;')}">نسخ</button>
             ${a.text}
           </div>
         </div>
@@ -986,7 +994,8 @@ function renderArticlePage(sysId, num){
 }
 function toggleExample(btn){ btn.closest('.example-card').classList.toggle('open'); }
 function copyText(btn){
-  const text = btn.dataset.text.replace(/==([^=]+)==/g, '$1');
+  const block = btn.closest('.art-section').querySelector('.law-block');
+  const text = block.innerText.replace(/==([^=]+)==/g, '$1').trim();
   navigator.clipboard?.writeText(text).then(()=>showToast('تم نسخ النص'));
 }
 function copyLink(){
