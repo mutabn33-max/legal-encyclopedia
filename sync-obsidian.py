@@ -79,6 +79,42 @@ def metadata(raw):
     return result
 
 
+
+def related_markup(value):
+    # Preserve the wording; render only the bold syntax used in relationships.
+    return re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", markup(value))
+
+def read_relationships(raw):
+    if not raw.strip():
+        return []
+    parts = re.split(r"^###[ \t]+(.+?)[ \t]*$", raw, flags=re.M)
+    if parts[0].strip() or len(parts) == 1:
+        raise ValueError("قسم المواد المترابطة يحتاج عنوانًا يبدأ بـ ### المواد")
+    result = []
+    for title, body in zip(parts[1::2], parts[2::2]):
+        nums = []
+        for m in re.finditer(r"(\d+)(?:\s*(?:إلى|الى|[-–])\s*(\d+))?", title):
+            first = int(m.group(1))
+            last = int(m.group(2)) if m.group(2) else first
+            if not 0 < first <= last or last-first > 500:
+                raise ValueError("نطاق مواد غير صحيح: " + title)
+            nums.extend(range(first, last+1))
+        if not nums:
+            raise ValueError("لم أجد أرقام المواد في: " + title)
+        fields = re.split(r"^[ \t]*(نوع الصلة|السبب المختصر|الشرح الميسّر):[ \t]*", body, flags=re.M)
+        values = dict(zip(fields[1::2], (v.strip() for v in fields[2::2])))
+        if fields[0].strip() or any(not values.get(k) for k in ("نوع الصلة","السبب المختصر","الشرح الميسّر")):
+            raise ValueError("حقول علاقة غير مكتملة: " + title)
+        result.append({
+            "title": html.escape(title),
+            "nums": list(dict.fromkeys(nums)),
+            "kind": related_markup(values["نوع الصلة"]),
+            "reason": related_markup(values["السبب المختصر"]),
+            "explanation": related_markup(values["الشرح الميسّر"]),
+        })
+    return result
+
+
 def read_content(root):
     systems = []
     skipped = []
@@ -122,7 +158,7 @@ def read_content(root):
                 "usage": [markup(practical)] if practical else [],
                 "examples": cases,
                 "slang": markup(section(sections, "الشرح الميسّر")),
-                "related": [],
+                "related": read_relationships(sections.get("المواد المترابطة", "")),
                 "added": datetime.fromtimestamp(file.stat().st_mtime).strftime("%Y-%m-%d"),
             })
 

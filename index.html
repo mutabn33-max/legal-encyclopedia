@@ -383,6 +383,14 @@ footer{border-top:1px solid var(--line); margin-top:60px; padding:50px 0 26px; p
 .dark .key-phrase{color:#ffe066;}
 .art-section{scroll-margin-top:110px;}
 #artToc a[hidden]{display:none;}
+.article-title{color:#1f6f5c;}
+.dark .article-title{color:#78cbb2;}
+.relation-card{border:1px solid var(--line);border-radius:var(--radius);background:var(--paper-raised);padding:22px;margin-bottom:16px;overflow-wrap:anywhere;}
+.relation-card h3{font-size:1.05rem;margin-bottom:12px;}
+.relation-links{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+.relation-field{margin-top:16px;line-height:1.9;}
+.relation-field h4{font-size:.9rem;color:var(--ink-soft);margin-bottom:6px;}
+.relation-unavailable{font-size:.85rem;color:var(--ink-soft);}
 </style>
 </head>
 <body>
@@ -876,6 +884,29 @@ function applyKeyPhrases(root){
   });
 }
 
+
+function renderRelationships(system, article){
+  if(!Array.isArray(article.related) || !article.related.length) return '';
+  const cards = article.related.map(r=>{
+    const nums = Array.isArray(r.nums) ? r.nums : [r.num];
+    const sys = r.sys || system.id;
+    const links = nums.filter(n=>Number.isInteger(n) && n>0).map(n=>{
+      const label = 'المادة '+n;
+      return findArticle(sys,n)
+        ? '<a class="btn btn-ghost btn-sm" href="'+routeToHash('article',{sysId:sys,num:n})+'">'+label+'</a>'
+        : '<span class="relation-unavailable">'+label+' (غير متوفرة)</span>';
+    }).join('');
+    return '<div class="relation-card">'+
+      (r.title ? '<h3>'+r.title+'</h3>' : '')+
+      '<div class="relation-links">'+links+'</div>'+
+      (r.kind ? '<div class="relation-field"><h4>نوع الصلة</h4>'+r.kind+'</div>' : '')+
+      (r.reason ? '<div class="relation-field"><h4>السبب المختصر</h4>'+r.reason+'</div>' : '')+
+      (r.explanation ? '<div class="relation-field"><h4>الشرح الميسّر</h4>'+r.explanation+'</div>' : '')+
+      '</div>';
+  }).join('');
+  return '<section class="art-section" id="sec-related"><h2><span class="dot"></span>المواد المترابطة</h2>'+cards+'</section>';
+}
+
 function renderArticlePage(sysId, num){
   const s = findSystem(sysId);
   const a = findArticle(sysId, num);
@@ -896,20 +927,17 @@ function renderArticlePage(sysId, num){
         <a href="#sec-usage">التطبيق العملي</a>
         <a href="#sec-examples">حالات تطبيقية</a>
         <a href="#sec-slang">الشرح الميسّر</a>
-        <a href="#sec-related">مواد مرتبطة</a>
+        ${a.related && a.related.length ? '<a href="#sec-related">المواد المترابطة</a>' : ''}
       </nav>
       <div>
         <div class="article-head">
           <div class="article-meta">
             <span class="type-pill">${s.name}</span>
-            ${a.chapter && a.chapter.trim().replace(/[()]/g,'').trim() !== 'بدون باب' ? '<span class="meta-sep" aria-hidden="true">←</span><span>'+a.chapter+'</span>' : ''}
-            ${a.title ? '<span class="meta-sep" aria-hidden="true">←</span><span>'+a.title+'</span>' : ''}
+            ${a.chapter && a.chapter.trim().replace(/[()]/g,'').trim() !== 'بدون باب' ? '<span class="type-pill">'+a.chapter+'</span>' : ''}
           </div>
-          <h1>المادة ${a.num}</h1>
+          <h1>المادة ${a.num}${a.title ? '<span class="article-title"> - '+a.title+'</span>' : ''}</h1>
           <div class="article-tools">
             <button class="tool-btn" onclick="copyLink()">🔗 نسخ الرابط</button>
-            <button class="tool-btn" onclick="shareArticle('${a.num}','${s.name}')">↗ مشاركة</button>
-            <button class="tool-btn" onclick="window.print()">🖨 طباعة</button>
           </div>
         </div>
         <div class="art-section" id="sec-text">
@@ -943,17 +971,7 @@ function renderArticlePage(sysId, num){
           <h2><span class="dot"></span>الشرح الميسّر</h2>
           ${a.slang ? `<div class="slang-block"><div class="slang-note">💬 شرح مبسط للمادة</div>${a.slang}</div>` : `<div class="empty-note">الالشرح الميسّر غير متوفر حاليًا.</div>`}
         </div>
-        <div class="art-section" id="sec-related" style="border-bottom:none;">
-          <h2><span class="dot"></span>مواد مرتبطة</h2>
-          ${a.related && a.related.length ? `<div class="related-grid">${a.related.map(r=>{
-            const rs = findSystem(r.sys);
-            return `<div class="related-card" onclick="go('article',{sysId:'${r.sys}', num:${r.num}})" style="cursor:pointer">
-              <div class="num">المادة ${r.num}</div>
-              <div class="sysname">${rs?rs.name:''}</div>
-              <span class="btn btn-ghost btn-sm">عرض المادة</span>
-            </div>`;
-          }).join('')}</div>` : `<div class="empty-note">لا توجد مواد مرتبطة مضافة حاليًا.</div>`}
-        </div>
+        ${renderRelationships(s, a)}
         <div class="article-nav">
           ${prev ? `<div class="nav-arrow" onclick="go('article',{sysId:'${s.id}', num:${prev.num}})" style="cursor:pointer; text-align:right;"><div class="lbl">← المادة السابقة</div><div class="val">المادة ${prev.num}</div></div>` : `<div></div>`}
           ${next ? `<div class="nav-arrow" onclick="go('article',{sysId:'${s.id}', num:${next.num}})" style="cursor:pointer; text-align:left;"><div class="lbl">المادة التالية →</div><div class="val">المادة ${next.num}</div></div>` : `<div></div>`}
@@ -973,10 +991,6 @@ function renderArticlePage(sysId, num){
       }
     });
   });
-  if(!a.related || !a.related.length){
-    wrap.querySelector('#sec-related').hidden = true;
-    wrap.querySelector('#artToc a[href="#sec-related"]').hidden = true;
-  }
   applyKeyPhrases(wrap);
   // sticky TOC active state on scroll
   const secs = wrap.querySelectorAll('.art-section');
