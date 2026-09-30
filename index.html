@@ -380,6 +380,24 @@ footer{border-top:1px solid var(--line); margin-top:60px; padding:50px 0 26px; p
   .article-layout{grid-template-columns:1fr;}
 }
 .key-phrase{color:#1b6251;background:transparent;font-weight:800;}
+/* Markdown content rendered from article files */
+.md-content{color:var(--ink-soft);line-height:2.05;}
+.md-content p{margin:0 0 15px;}
+.md-content p:last-child{margin-bottom:0;}
+.md-content .md-subheading{color:var(--pine-deep);font-size:1.03rem;font-weight:800;line-height:1.7;margin:24px 0 10px;}
+.md-content .md-subheading:first-child{margin-top:0;}
+.dark .md-content .md-subheading{color:#78cbb2;}
+.md-content .md-subheading-small{font-size:.98rem;}
+.md-content .md-list{margin:8px 0 18px;padding-right:26px;}
+.md-content .md-list li{padding-right:5px;margin:4px 0;}
+.md-content .md-list-ordered{list-style-type:decimal;}
+.md-content .md-quote{margin:16px 0;padding:12px 18px;border-right:4px solid var(--amber);background:var(--amber-tint);border-radius:10px;color:var(--ink);}
+.dark .md-content .md-quote{color:var(--ink);}
+.md-content .md-label{display:block;color:var(--pine-deep);margin:10px 0 4px;font-weight:800;}
+.dark .md-content .md-label{color:#78cbb2;}
+.md-content .md-rule{border:0;border-top:1px dashed var(--line);margin:22px 0;}
+.md-content strong{color:var(--ink);font-weight:800;}
+
 .dark .key-phrase{color:#ffe066;}
 .art-section{scroll-margin-top:110px;}
 #artToc a[hidden]{display:none;}
@@ -899,9 +917,9 @@ function renderRelationships(system, article){
     return '<div class="relation-card">'+
       (r.title ? '<h3>'+r.title+'</h3>' : '')+
       '<div class="relation-links">'+links+'</div>'+
-      (r.kind ? '<div class="relation-field"><h4>نوع الصلة</h4>'+r.kind+'</div>' : '')+
-      (r.reason ? '<div class="relation-field"><h4>السبب المختصر</h4>'+r.reason+'</div>' : '')+
-      (r.explanation ? '<div class="relation-field"><h4>الشرح الميسّر</h4>'+r.explanation+'</div>' : '')+
+      (r.kind ? '<div class="relation-field md-content"><h4>نوع الصلة</h4>'+r.kind+'</div>' : '')+
+      (r.reason ? '<div class="relation-field md-content"><h4>السبب المختصر</h4>'+r.reason+'</div>' : '')+
+      (r.explanation ? '<div class="relation-field md-content"><h4>الشرح الميسّر</h4>'+r.explanation+'</div>' : '')+
       '</div>';
   }).join('');
   return '<section class="art-section" id="sec-related"><h2><span class="dot"></span>المواد المترابطة</h2>'+cards+'</section>';
@@ -946,16 +964,16 @@ function renderArticlePage(sysId, num){
             <button class="tool-btn" onclick="copyText(this)">نسخ المادة</button>
           </div>
           <div class="law-block">
-            ${a.text}
+            <div class="md-content">${a.text}</div>
           </div>
         </div>
         <div class="art-section" id="sec-explain">
           <h2><span class="dot"></span>المعنى والأحكام</h2>
-          ${a.explain ? `<p style="color:var(--ink-soft)">${a.explain}</p>` : `<div class="empty-note">المعنى والأحكام غير متوفر حاليًا.</div>`}
+          ${a.explain ? `<div class="md-content">${a.explain}</div>` : `<div class="empty-note">المعنى والأحكام غير متوفر حاليًا.</div>`}
         </div>
         <div class="art-section" id="sec-usage">
           <h2><span class="dot"></span>التطبيق العملي</h2>
-          ${a.usage && a.usage.length ? `<ul style="padding-right:20px; color:var(--ink-soft); display:flex; flex-direction:column; gap:8px;">${a.usage.map(u=>`<li>${u}</li>`).join('')}</ul>` : `<div class="empty-note">لا يوجد محتوى استخدام مضاف بعد.</div>`}
+          ${a.usage && a.usage.length ? `<div class="md-content">${a.usage.join('')}</div>` : `<div class="empty-note">لا يوجد محتوى استخدام مضاف بعد.</div>`}
         </div>
         <div class="art-section" id="sec-examples">
           <h2><span class="dot"></span>حالات تطبيقية</h2>
@@ -969,7 +987,7 @@ function renderArticlePage(sysId, num){
         </div>
         <div class="art-section" id="sec-slang">
           <h2><span class="dot"></span>الشرح الميسّر</h2>
-          ${a.slang ? `<div class="slang-block"><div class="slang-note">💬 شرح مبسط للمادة</div>${a.slang}</div>` : `<div class="empty-note">الالشرح الميسّر غير متوفر حاليًا.</div>`}
+          ${a.slang ? `<div class="slang-block"><div class="slang-note">💬 شرح مبسط للمادة</div><div class="md-content">${a.slang}</div></div>` : `<div class="empty-note">الشرح الميسّر غير متوفر حاليًا.</div>`}
         </div>
         ${renderRelationships(s, a)}
         <div class="article-nav">

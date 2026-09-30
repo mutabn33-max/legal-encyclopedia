@@ -39,12 +39,111 @@ def section(sections, canonical):
     return ""
 
 
+def inline_markup(value):
+    """Convert the approved inline Markdown syntax into safe HTML."""
+    text = html.escape(value, quote=False)
+    # Highlight syntax is deliberately kept as a <mark> so the site theme
+    # can colour it differently in light and dark mode.
+    text = re.sub(r"==(.+?)==", r'<mark class="key-phrase">\1</mark>', text)
+    text = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", text)
+    text = re.sub(r"(?<!\*)\*([^*\n]+)\*(?!\*)", r"<em>\1</em>", text)
+    # Labels used in practical examples are visually separated from their text.
+    if re.fullmatch(r"(?:الواقعة|تطبيق المادة|النتيجة المحتملة|نوع الصلة|السبب المختصر|الشرح الميسّر):", value.strip()):
+        return '<strong class="md-label">' + html.escape(value.strip(), quote=False) + '</strong>'
+    return text
+
+
 def markup(value):
-    return "".join(
-        "<p>" + html.escape(part).replace("\n", "<br>") + "</p>"
-        for part in re.split(r"\n\s*\n", value.strip())
-        if part.strip()
-    )
+    """Render the supported Markdown syntax used in article files.
+
+    The parser is intentionally small and allow-listed: it supports the
+    notation documented for the encyclopedia and escapes everything else.
+    """
+    lines = value.replace("\r\n", "\n").replace("\r", "\n").split("\n")
+    blocks = []
+    paragraph = []
+    i = 0
+
+    def flush_paragraph():
+        if paragraph:
+            body = "<br>".join(inline_markup(line) for line in paragraph).strip()
+            if body:
+                blocks.append("<p>" + body + "</p>")
+            paragraph.clear()
+
+    while i < len(lines):
+        line = lines[i]
+        stripped = line.strip()
+        if not stripped:
+            flush_paragraph()
+            i += 1
+            continue
+
+        heading = re.match(r"^###\s+(.+?)\s*$", stripped)
+        if heading:
+            flush_paragraph()
+            blocks.append('<h3 class="md-subheading">' + inline_markup(heading.group(1)) + '</h3>')
+            i += 1
+            continue
+
+        heading4 = re.match(r"^####\s+(.+?)\s*$", stripped)
+        if heading4:
+            flush_paragraph()
+            blocks.append('<h4 class="md-subheading md-subheading-small">' + inline_markup(heading4.group(1)) + '</h4>')
+            i += 1
+            continue
+
+        bullet = re.match(r"^[-*]\s+(.+)$", stripped)
+        if bullet:
+            flush_paragraph()
+            items = []
+            while i < len(lines):
+                m = re.match(r"^\s*[-*]\s+(.+)$", lines[i].strip())
+                if not m:
+                    break
+                items.append("<li>" + inline_markup(m.group(1)) + "</li>")
+                i += 1
+            blocks.append('<ul class="md-list">' + "".join(items) + "</ul>")
+            continue
+
+        ordered = re.match(r"^\d+[.)]\s+(.+)$", stripped)
+        if ordered:
+            flush_paragraph()
+            items = []
+            while i < len(lines):
+                m = re.match(r"^\s*\d+[.)]\s+(.+)$", lines[i].strip())
+                if not m:
+                    break
+                items.append("<li>" + inline_markup(m.group(1)) + "</li>")
+                i += 1
+            blocks.append('<ol class="md-list md-list-ordered">' + "".join(items) + "</ol>")
+            continue
+
+        quote = re.match(r"^>\s?(.*)$", stripped)
+        if quote:
+            flush_paragraph()
+            items = []
+            while i < len(lines):
+                m = re.match(r"^>\s?(.*)$", lines[i].strip())
+                if not m:
+                    break
+                items.append(inline_markup(m.group(1)))
+                i += 1
+            blocks.append('<blockquote class="md-quote">' + "<br>".join(items) + "</blockquote>")
+            continue
+
+        # A horizontal rule is a layout instruction, not article text.
+        if re.fullmatch(r"-{3,}|\*{3,}", stripped):
+            flush_paragraph()
+            blocks.append('<hr class="md-rule">')
+            i += 1
+            continue
+
+        paragraph.append(line)
+        i += 1
+
+    flush_paragraph()
+    return "".join(blocks)
 
 
 
@@ -81,8 +180,8 @@ def metadata(raw):
 
 
 def related_markup(value):
-    # Preserve the wording; render only the bold syntax used in relationships.
-    return re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", markup(value))
+    # Relationship fields use the same approved Markdown renderer.
+    return markup(value)
 
 def read_relationships(raw):
     if not raw.strip():
